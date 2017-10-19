@@ -31,7 +31,34 @@ Technically only `<jmxConfigurator />` needs tp be added to `logback.xml`. See [
 
 ## Usage 
 
-To get the logging levels:
+### Common options
+
+There are two common options in every command:
+
+`-h` or `--host` to specify the IP address and the port where Jolokia agent is listening for incoming connections. Can be multiple. _Example:_ `-h 192.168.2.1:8778 -h 192.168.2.2:8778 -h 192.168.2.3:8778`
+
+`--socks5` for specifying the SOCKS5 proxy IP address and port (if needed). _Example_: `--socks5 127.0.0.1:9999`
+
+This might be useful with SSH.
+
+### Listing all loggers
+
+To list the loggers use `list-loggers` command:
+
+```bash
+$ jloglevel list-loggers -h 192.168.2.1:8778
+
+http://192.168.2.1:8778/
+ROOT
+me
+me.ivanyu
+me.ivanyu.agenthost
+me.ivanyu.agenthost.App
+```
+
+### Getting the logging level
+
+To get the logging levels use `get` command:
 
 ```bash
 $ jloglevel get -h 192.168.2.1:8778 -h 192.168.2.2:8778 -h 192.168.2.3:8778
@@ -41,10 +68,9 @@ http://192.168.2.2:8778/	DEBUG
 http://192.168.2.3:8778/	DEBUG
 ```
 
-Here, `192.168.2.x` and `8778` are the IP addresses and ports where Jolokia agent is listening for incoming connections.
+### Setting the logging level
 
-And to set the loggin levels:
-
+To set the logging levels use `set` command:
 
 ```bash
 $ jloglevel set -h 192.168.2.1:8778 -h 192.168.2.2:8778 -h 192.168.2.3:8778 TRACE
@@ -55,14 +81,6 @@ http://192.168.2.3:8778/	OK
 ```
 
 Starting from this moment, the logging level of the ROOT logger is `TRACE`.
-
-SOCKS5 proxying is supported via `--socks5` option:
-
-```bash
-$ jloglevel get -h 192.168.2.1:8778 --socks5 127.0.0.1:9999
-```
-
-This might be useful with SSH.
 
 ## Authors and Contributors
 
