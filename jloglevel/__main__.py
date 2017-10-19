@@ -49,16 +49,21 @@ def list_loggers_cmd(host, socks5):
 @cli.command(name='get')
 @host_option
 @socks5_option
-def get_cmd(host, socks5):
+@click.option('-l', '--logger',
+              help='The name of the logger to get the logging level of.',
+              default='ROOT')
+def get_cmd(host, socks5, logger):
     # host is plural (Click limitation).
 
     """Gets the logging level from hosts."""
 
     request_params = create_request_params(socks5)
 
+    click.echo('Logger {}'.format(make_green(logger)))
+
     for h in host:
         h = normalise_host(h)
-        get_url = create_get_url(h)
+        get_url = create_get_url(h, logger)
         try:
             response = requests.get(get_url, **request_params)
             response.raise_for_status()
@@ -74,14 +79,19 @@ def get_cmd(host, socks5):
 @cli.command(name='set')
 @host_option
 @socks5_option
+@click.option('-l', '--logger',
+              help='The name of the logger to set the logging level of.',
+              default='ROOT')
 @click.argument('level',
                 type=click.Choice(['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR']))
-def set_cmd(host, socks5, level):
+def set_cmd(host, socks5, logger, level):
     # host is plural (Click limitation).
 
     """Sets the logging level on hosts."""
 
     request_params = create_request_params(socks5)
+
+    click.echo('Logger {}'.format(make_green(logger)))
 
     for h in host:
         h = normalise_host(h)
@@ -91,7 +101,7 @@ def set_cmd(host, socks5, level):
                 'type': 'EXEC',
                 'mbean': MBEAN,
                 'operation': 'setLoggerLevel',
-                'arguments': ['ROOT', level]
+                'arguments': [logger, level]
             }
             response = requests.post(set_url, json=json, **request_params)
             response.raise_for_status()
@@ -133,8 +143,8 @@ def create_list_loggers_url(host):
     return urllib.parse.urlunsplit([schema, netloc, path, '', ''])
 
 
-def create_get_url(host):
-    path = ('jolokia/exec/{}/getLoggerLevel/ROOT'.format(MBEAN))
+def create_get_url(host, logger):
+    path = ('jolokia/exec/{}/getLoggerLevel/{}'.format(MBEAN, logger))
     split_result = urllib.parse.urlsplit(host)
     schema = split_result[0]
     netloc = split_result[1]
