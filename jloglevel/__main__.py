@@ -19,10 +19,12 @@ host_option = click.option(
     '-h', '--host', multiple=True,
     help='Host (and port if needed) to connect. Can be multiple.')
 
+socks5_option = click.option('--socks5', default=None)
+
 
 @cli.command(name='get')
 @host_option
-@click.option('--socks5', default=None)
+@socks5_option
 def get_cmd(host, socks5):
     # host is plural (Click limitation).
 
@@ -47,7 +49,7 @@ def get_cmd(host, socks5):
 
 @cli.command(name='set')
 @host_option
-@click.option('--socks5', default=None)
+@socks5_option
 @click.argument('level',
                 type=click.Choice(['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR']))
 def set_cmd(host, socks5, level):
