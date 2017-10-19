@@ -14,7 +14,7 @@ JMX has a drawback: it doesn't go well with firewalls, especially in dynamic clo
 
 Combining all this together, jloglevel makes it easy to get and set the logging level on a number of JVM applications (e.g. a scaled-out service).
 
-Currently, only [Logback](https://logback.qos.ch/)'s `ROOT` logger is supported.
+Currently, only [Logback](https://logback.qos.ch/) library is supported.
 
 ## Installation
 
@@ -63,9 +63,19 @@ To get the logging levels use `get` command:
 ```bash
 $ jloglevel get -h 192.168.2.1:8778 -h 192.168.2.2:8778 -h 192.168.2.3:8778
 
+Logger ROOT
 http://192.168.2.1:8778/	DEBUG
 http://192.168.2.2:8778/	DEBUG
 http://192.168.2.3:8778/	DEBUG
+```
+
+By default, the logger is `ROOT`. You can get the logging level of another logger using `-l/--logger` option:
+
+```bash
+$ jloglevel get -h 192.168.2.1:8778 -l me.ivanyu.testapp.App
+
+Logger me.ivanyu.testapp.App
+http://192.168.2.1:8778/	DEBUG
 ```
 
 ### Setting the logging level
@@ -75,12 +85,22 @@ To set the logging levels use `set` command:
 ```bash
 $ jloglevel set -h 192.168.2.1:8778 -h 192.168.2.2:8778 -h 192.168.2.3:8778 TRACE
 
+Logger ROOT
 http://192.168.2.1:8778/	OK
 http://192.168.2.2:8778/	OK
 http://192.168.2.3:8778/	OK
 ```
 
 Starting from this moment, the logging level of the ROOT logger is `TRACE`.
+
+As with `get` command, you can specify a logger different from the default `ROOT` using `-l/--logger` option:
+
+```bash
+$ jloglevel set -h 192.168.2.1:8778 -l me.ivanyu.testapp.App TRACE
+
+Logger me.ivanyu.testapp.App
+http://192.168.2.1:8778/	OK
+```
 
 ## Authors and Contributors
 
