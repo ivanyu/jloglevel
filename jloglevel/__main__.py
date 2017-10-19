@@ -22,6 +22,30 @@ host_option = click.option(
 socks5_option = click.option('--socks5', default=None)
 
 
+@cli.command(name='list-loggers')
+@host_option
+@socks5_option
+def list_loggers_cmd(host, socks5):
+    # host is plural (Click limitation).
+
+    """List loggers on the host."""
+
+    request_params = create_request_params(socks5)
+
+    for h in host:
+        h = normalise_host(h)
+        list_loggers_url = create_list_loggers_url(h)
+        try:
+            response = requests.get(list_loggers_url, **request_params)
+            response.raise_for_status()
+            click.echo(make_green(h))
+            for log_level in response.json()['value']:
+                click.echo(log_level)
+            click.echo()
+        except Exception as e:
+            click.echo(e, err=True)
+
+
 @cli.command(name='get')
 @host_option
 @socks5_option
@@ -99,6 +123,14 @@ def normalise_host(host):
     if not host.endswith('/'):
         host = host + '/'
     return host
+
+
+def create_list_loggers_url(host):
+    path = ('jolokia/read/{}/LoggerList'.format(MBEAN))
+    split_result = urllib.parse.urlsplit(host)
+    schema = split_result[0]
+    netloc = split_result[1]
+    return urllib.parse.urlunsplit([schema, netloc, path, '', ''])
 
 
 def create_get_url(host):
