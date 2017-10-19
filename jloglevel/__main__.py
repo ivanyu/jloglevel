@@ -41,7 +41,7 @@ def get_cmd(host, socks5):
         except Exception as e:
             click.echo(e, err=True)
             click.echo(
-                '{}\t{}'.format(h, make_red('error setting loglevel'))
+                '{}\t{}'.format(h, make_red('error getting loglevel'))
             )
 
 
