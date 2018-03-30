@@ -3,7 +3,13 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+sudo: required
+services:
+  - docker
+
 # command to install dependencies
 install: "pip install -r requirements.txt"
+
 script:
   - python setup.py sdist --formats=gztar
+  - python test.py
